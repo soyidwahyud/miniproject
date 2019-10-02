@@ -2,11 +2,15 @@ package com.example.bloodbankinventory;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Bundle;
+import android.os.Message;
+import android.preference.PreferenceManager;
 
 public class MainActivity extends AppCompatActivity {
     private int waktu_loading=4000;
+    String isLogin;
 
     //4000=4 detik
 
@@ -19,11 +23,12 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
 
                 //setelah loading maka akan langsung berpindah ke home activity
-                Intent login=new Intent(MainActivity.this, login.class);
-                startActivity(login);
+                Intent home=new Intent(MainActivity.this, home.class);
+                startActivity(home);
                 finish();
 
             }
         },waktu_loading);
     }
+
 }
