@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
 
+import com.example.bloodbankinventory.fragment.HomeFragment;
+
 public class MainActivity extends AppCompatActivity {
     private int waktu_loading=4000;
     String isLogin;
@@ -23,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
 
                 //setelah loading maka akan langsung berpindah ke home activity
-                Intent home=new Intent(MainActivity.this, home.class);
+                Intent home=new Intent(getApplicationContext(), home.class);
                 startActivity(home);
                 finish();
 
