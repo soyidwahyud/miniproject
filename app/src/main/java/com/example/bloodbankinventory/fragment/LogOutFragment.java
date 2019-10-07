@@ -24,7 +24,7 @@ import com.example.bloodbankinventory.shareprefs;
  * A simple {@link Fragment} subclass.
  */
 public class LogOutFragment extends Fragment {
-    //private TextView logout;
+    private TextView logout1;
     //SessionManager session;
     //private Session session;
     private shareprefs session;
