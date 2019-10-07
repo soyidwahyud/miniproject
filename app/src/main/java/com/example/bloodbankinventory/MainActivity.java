@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
 
                 //setelah loading maka akan langsung berpindah ke home activity
-                Intent home=new Intent(getApplicationContext(), home.class);
+                Intent home=new Intent(getApplicationContext(), login.class);
                 startActivity(home);
                 finish();
 

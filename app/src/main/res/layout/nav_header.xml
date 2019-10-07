@@ -11,12 +11,12 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Easy Android Indonesia"
+        android:text="Blood Bank Inventory"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="easyandroidindonesia.blogspot.com"
+        android:text="Soyid Wahyu Darmawan - 1741720151"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
 
 </LinearLayout>
