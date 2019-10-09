@@ -2,6 +2,7 @@ package com.example.bloodbankinventory;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.view.inputmethod.EditorInfo;
+import androidx.fragment.app.Fragment;
 import java.util.List;
 
 import com.example.bloodbankinventory.fragment.HomeFragment;
@@ -55,6 +57,10 @@ public class login extends AppCompatActivity {
                     //Toast.makeText(getApplicationContext(),"login successfully",Toast.LENGTH_SHORT).show();
                     //session.createLoginSession("soyidwahyud", "soyid24");
                     //SessionManager.checkLogin(SessionManager.IS_LOGIN, true);
+                    AlertDialog alertDialog = new AlertDialog.Builder(login.this).create();
+                    alertDialog.setTitle("Pesan");
+                    alertDialog.setMessage("Login Berhasil");
+                    alertDialog.show();
                     razia();
                 } else {
                     //Toast.makeText(getApplicationContext(),"wrong login",Toast.LENGTH_SHORT).show();
@@ -119,6 +125,11 @@ public class login extends AppCompatActivity {
                 Intent intent = new Intent(this, home.class);
                 startActivity(intent);
                 finish();
+
+                //FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                //fragmentTransaction.replace(R.id.dynamic_fragment_placeholder,new HomeFragment());
+                //fragmentTransaction.commit();
+
             }
 
         /*private void masuk(){

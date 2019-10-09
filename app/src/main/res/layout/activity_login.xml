@@ -80,6 +80,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/login" />
 
+    <FrameLayout
+        android:id="@+id/dynamic_fragment_placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="735dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+    </FrameLayout>
+
     <EditText
         android:id="@+id/editpassword"
         android:layout_width="wrap_content"

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 
+import static com.example.bloodbankinventory.SessionManager._context;
 import static com.example.bloodbankinventory.SessionManager.pref;
 
 public class shareprefs {
@@ -13,10 +14,29 @@ public class shareprefs {
     static final String KEY_USER_TEREGISTER ="user", KEY_PASS_TEREGISTER ="pass";
     static final String KEY_USERNAME_SEDANG_LOGIN = "Username_logged_in";
     static final String KEY_STATUS_SEDANG_LOGIN = "Status_logged_in";
+    private static final String PREF_NAME = "pref";
+    private static final String DATA = "data";
+    private SharedPreferences.Editor editor;
 
     Context context;
     public shareprefs(Context context) {
+
         this.context = context;
+        pref = _context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        editor = pref.edit();
+    }
+    public void saveDataList(String coombserum,String nacl,String tabung,String pipet,String hand, String masker, String gelas) {
+        editor.putString(DATA, "");
+        editor.putString(DATA,"");
+        editor.putString(DATA,"");
+        editor.putString(DATA,"");
+        editor.putString(DATA,"");
+        editor.putString(DATA,"");
+        editor.putString(DATA,"");
+        editor.commit();
+    }
+    public String getDataList(){
+        return pref.getString(DATA, "");
     }
     public static String readSharedSetting(Context ctx, String settingName, String defaultValue) {
         SharedPreferences sharedPref = ctx.getSharedPreferences(FileName, Context.MODE_PRIVATE);

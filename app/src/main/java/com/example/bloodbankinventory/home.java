@@ -10,12 +10,14 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +34,8 @@ import com.google.android.material.navigation.NavigationView;
 
 public class home extends AppCompatActivity {
     private Context ctx;
+    private FragmentManager fragmentManager;
+    private static final String TAG = "home";
     Button logout;
     DrawerLayout mDrawerLayout;
     Toolbar toolbar;
@@ -46,6 +50,7 @@ public class home extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        loadFragment(new HomeFragment());
         ActionBar actionbar = getSupportActionBar();
         if (actionbar != null){
             actionbar.setDisplayHomeAsUpEnabled(true);
@@ -54,21 +59,37 @@ public class home extends AppCompatActivity {
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
         drawerToggle = setupDrawerToggle();
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        final NavigationView navigationView = findViewById(R.id.nav_view);
         mDrawerLayout.addDrawerListener(drawerToggle);
         setupNavDrawer(navigationView);
 
 
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Menghapus Status login dan kembali ke Login Activity
-                shareprefs.clearLoggedInUser(getBaseContext());
-                startActivity(new Intent(getBaseContext(), login.class));
-                finish();
-            }
-        });
+        this.getSupportFragmentManager().addOnBackStackChangedListener(
+                new FragmentManager.OnBackStackChangedListener() {
+                    public void onBackStackChanged() {
+                        Fragment current = getCurrentFragment();
+                        if(current instanceof HomeFragment){
+                            navigationView.setCheckedItem(R.id.nav_home);
+                        }
+                        else if (current instanceof HistoryFragment) {
+                            navigationView.setCheckedItem(R.id.nav_history);
+                        } else if(current instanceof Data_MasukFragment) {
+                            navigationView.setCheckedItem(R.id.nav_datam);
+                        }
 
+                        else if(current instanceof Data_KeluarFragment) {
+                            navigationView.setCheckedItem(R.id.nav_datak);
+                        }
+                        else if(current instanceof LogOutFragment) {
+                            navigationView.setCheckedItem(R.id.nav_logout);
+                        }
+                    }
+                });
+
+    }
+
+    public Fragment getCurrentFragment() {
+        return this.getSupportFragmentManager().findFragmentById(R.id.home);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle(){
@@ -77,12 +98,16 @@ public class home extends AppCompatActivity {
                 mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
     }
 
+
     private void setupNavDrawer(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment = null;
                 switch (item.getItemId()) {
+                    case R.id.nav_home:
+                        fragment = new HomeFragment();
+                        break;
                     case R.id.nav_history:
                         fragment = new HistoryFragment();
                         break;
@@ -96,28 +121,31 @@ public class home extends AppCompatActivity {
                         fragment = new LogOutFragment();
                         break;
                     default:
-                        fragment = new HomeFragment();
+                        fragment = new HistoryFragment();
                 }
-
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.frame_content, fragment).commit();
-
-                item.setChecked(true);
                 setTitle(item.getTitle());
                 mDrawerLayout.closeDrawers();
-
-                return true;
+                return loadFragment(fragment);
             }
         });
     }
+    private boolean loadFragment(Fragment fragment) {
+        if (fragment != null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.frame_content, fragment)
+                    .addToBackStack(null)
+                    .commit();
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -129,14 +157,23 @@ public class home extends AppCompatActivity {
         /*if (id == R.id.action_settings) {
             return true;
         }*/
-        switch (item.getItemId()){
+        /*switch (item.getItemId()){
             case R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
 
+        }*/
+        if (item.getItemId() == android.R.id.home) {
+            Log.i(TAG, "onOptionsItemSelected: Home Button Clicked");
+            if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            }
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
