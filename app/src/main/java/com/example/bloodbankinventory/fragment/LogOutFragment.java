@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.media.tv.TvInputService;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.se.omapi.Session;
@@ -57,5 +58,10 @@ public class LogOutFragment extends Fragment {
             }
         });
         return rootView;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.fragment_logout);
     }
 }

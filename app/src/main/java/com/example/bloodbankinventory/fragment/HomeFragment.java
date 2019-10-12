@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.bloodbankinventory.R;
@@ -35,24 +36,19 @@ public class HomeFragment extends Fragment {
     TextView nama;
 
 
- @Override
- public View onCreateView(LayoutInflater inflater,@Nullable ViewGroup container,
-                          @Nullable Bundle savedInstanceState) {
-     View v = inflater.inflate(R.layout.fragment_home, container, false);
-     logout = (Button) v.findViewById(R.id.logout);
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+        return view;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.home);
+    }
 
-     logout.setOnClickListener(new View.OnClickListener() {
-         @Override
-         public void onClick(View v) {
-             //Menghapus Status login dan kembali ke Login Activity
-             shareprefs.clearLoggedInUser(getActivity().getBaseContext());
-             startActivity(new Intent(getActivity().getBaseContext(), login.class));
-             getActivity().finish();
-         }
-     });
-     return v;
- }
 
     /*public void CheckSession(){
 
