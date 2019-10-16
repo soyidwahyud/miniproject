@@ -2,63 +2,60 @@ package com.example.bloodbankinventory.fragment;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-
-import com.example.bloodbankinventory.MainActivity;
 import com.example.bloodbankinventory.R;
 import com.example.bloodbankinventory.shareprefs;
 import com.example.bloodbankinventory.utils.Barang;
-import com.example.bloodbankinventory.utils.BarangAdapter;
+//import com.example.bloodbankinventory.utils.BarangAdapter;
 import com.google.gson.Gson;
-
 import android.content.SharedPreferences;
-import android.os.Bundle;
+
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Layout;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
-import static android.content.Context.MODE_PRIVATE;
-import com.example.bloodbankinventory.fragment.HistoryFragment;
-
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class Data_MasukFragment extends Fragment {
-    private Gson gson;
     private shareprefs share;
-    private SharedPreferences sharedPreferences;
-    private Button add, enter;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+    private Button add, clear,delete;
     ArrayList<Barang> barangList = new ArrayList<Barang>();
-    private BarangAdapter adapter;
+
     private RecyclerView.LayoutManager layout;
     private ListView ListView;
     private RecyclerView RecyclerView;
-    @BindView(R.id.editCoomb1) EditText coomb;
-    @BindView(R.id.editNacl1)EditText nacl;
+    JSONObject saved = new JSONObject();
+    EditText coomb, nacl;
 
 
     @Override
@@ -68,93 +65,129 @@ public class Data_MasukFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_data__masuk, container, false);
 
         //buildRecyclerView(view);
+        coomb = view.findViewById(R.id.editCoomb1);
+        nacl = view.findViewById(R.id.editNacl1);
         ListView = view.findViewById(R.id.listview1);
+        add = view.findViewById(R.id.addButton);
+        clear = view.findViewById(R.id.clearButton);
         barangList.add(new Barang("12","14"));
         barangList.add(new Barang("34","12"));
-        BarangAdapter barang = new BarangAdapter(barangList,getContext());
-        ListView.setAdapter(barang);
+        delete = view.findViewById(R.id.deleteButton);
 
-        gson = new Gson();
-        share = new shareprefs(getActivity().getApplicationContext());
-        buildListView(view);
-        loadData();
+        init(view);
 
-        setInsertButton(view);
-
-        enter = (Button) view.findViewById(R.id.enterButton);
-        enter.setOnClickListener(new View.OnClickListener() {
+        Intent intent = getActivity().getIntent();
+        if(intent.getIntExtra("position",-1)!=1){
+            try{
+                String c = coomb.getText().toString();
+                String n = coomb.getText().toString();
+                if(!sharedPreferences.getString("saved","").equals(""))
+                    saved = new JSONObject(sharedPreferences.getString("saved",""));
+                coomb.setText(saved.getString("saved" + intent.getIntExtra("position",0)));
+                nacl.setText(saved.getString("saved" + intent.getIntExtra("position",0)));
+                c = saved.getString("saved" + + intent.getIntExtra("position",0));
+                n = saved.getString("saved" + + intent.getIntExtra("position",0));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        clear.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                saveData();
+            public void onClick(View v) {
+                String c = coomb.getText().toString();
+                String n = coomb.getText().toString();
+                if(c.isEmpty()&&n.isEmpty()){
+                    Toast.makeText(getContext(),"enter text please",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    coomb.setText("");
+                    nacl.setText("");
+                }
             }
         });
-        return view;
-    }
-    private void setInsertButton(View view){
-        add =view.findViewById(R.id.addButton);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                EditText c = (EditText)view.findViewById(R.id.editCoomb1);
-                EditText n = (EditText)view.findViewById(R.id.editNacl1);
-                insertBarang(c.getText().toString(),n.getText().toString());
-                //barangList.add()
-                //adapter.notifyDataSetChanged();
-            }
+            public void onClick(View v) {
+                String c = coomb.getText().toString();
+                String n = nacl.getText().toString();
+                if(!c.equals("")&&!n.equals("")){
+                        try {
+                            if(!sharedPreferences.getString("saved","").equals(""))
+                            saved = new JSONObject(sharedPreferences.getString("saved",""));
+                        saved.put("saved" + saved.length(),c);
+                        saved.put("saved" + saved.length(),n);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    Log.d("testing",saved+"");
+                    editor.putString("saved",saved.toString());
+                    editor.apply();
+                    coomb.setText("");
+                    nacl.setText("");
+                    Fragment fragment = null;
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_content, new HistoryFragment());
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                    }
+                }
         });
+        delete.setOnClickListener(this::deleteAllValue);
+
+
+        return view;
     }
+    private void deleteAllValue(View view){
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("delete",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.commit();
+
+        Toast.makeText(getContext(),"Value Remove", Toast.LENGTH_SHORT).show();
+    }
+    private void init(View view){
+        sharedPreferences = getActivity().getSharedPreferences("text", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        coomb = view.findViewById(R.id.editCoomb1);
+        nacl = view.findViewById(R.id.editNacl1);
+        add = view.findViewById(R.id.addButton);
+        clear = view.findViewById(R.id.clearButton);
+    }
+
+
+
+    /*private void setInsertButton(View view){
+            add =view.findViewById(R.id.addButton);
+            add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    EditText c = (EditText)view.findViewById(R.id.editCoomb1);
+                    EditText n = (EditText)view.findViewById(R.id.editNacl1);
+                    insertBarang(c.getText().toString(),n.getText().toString());
+                    //barangList.add()
+                    //adapter.notifyDataSetChanged();
+                }
+            });
+        }*/
     /*private void buildRecyclerView(View view) {
         RecyclerView =(RecyclerView) view.findViewById(R.id.recyclerview1);
         RecyclerView.setHasFixedSize(true);
         layout = new LinearLayoutManager(getContext());
         adapter = new BarangAdapter(barangList);
     }*/
-    private void buildListView(View view){
+    /*private void buildListView(View view){
         ListView = (ListView)view.findViewById(R.id.listview1);
         ListView.setHasTransientState(true);
         layout = new LinearLayoutManager(getContext());
         adapter = new BarangAdapter(barangList);
-    }
-    private void saveData() {
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("shared preferences", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(barangList);
-        editor.putString("Data list", json);
-        editor.apply();
-        Fragment fragment = null;
-        if (fragment != null) {
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.frame_content, fragment)
-                    .addToBackStack(null)
-                    .commit();
-        }
-    }
+    }*/
 
-    private void loadData() {
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("shared preferences", Context.MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString("Data list", null);
-        Type type = new TypeToken<ArrayList<Barang>>() {}.getType();
-        barangList = gson.fromJson(json, type);
-
-        if (barangList == null) {
-            barangList = new ArrayList<>();
-        }
-    }
-    private void insertBarang(String barang1, String barang2) {
-        barangList.add(new Barang(barang1, barang2));
-        //adapter.notifyItemInserted(barangList.size());
-        adapter.notifyDataSetChanged();
-    }
     @Override
     public void onResume() {
         super.onResume();
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.fragment_datam);
     }
 
-    //private void setInsertButton() {
-    //
-    //}
 
 }

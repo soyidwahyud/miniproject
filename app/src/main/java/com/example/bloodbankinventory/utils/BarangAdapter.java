@@ -16,7 +16,7 @@ import com.example.bloodbankinventory.R;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-
+/*
 public class BarangAdapter  extends BaseAdapter {
 
     private ArrayList<Barang> barangList;
@@ -62,6 +62,6 @@ public class BarangAdapter  extends BaseAdapter {
 
         barangList = barang;
     }
+*/
 
-
-}
+//}
