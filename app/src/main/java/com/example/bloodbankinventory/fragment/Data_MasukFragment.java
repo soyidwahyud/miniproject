@@ -49,13 +49,13 @@ public class Data_MasukFragment extends Fragment {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     private Button add, clear,delete;
-    ArrayList<Barang> barangList = new ArrayList<Barang>();
 
     private RecyclerView.LayoutManager layout;
     private ListView ListView;
     private RecyclerView RecyclerView;
     JSONObject saved = new JSONObject();
-    EditText coomb, nacl;
+    EditText coomb, nacl, tabung, pipet, hands,masker,gelas;
+    Barang barang;
 
 
     @Override
@@ -67,15 +67,15 @@ public class Data_MasukFragment extends Fragment {
         //buildRecyclerView(view);
         coomb = view.findViewById(R.id.editCoomb1);
         nacl = view.findViewById(R.id.editNacl1);
-        ListView = view.findViewById(R.id.listview1);
+        tabung = view.findViewById(R.id.editTabung1);
+        pipet = view.findViewById(R.id.editPipet1);
+        hands = view.findViewById(R.id.editHands1);
+        masker = view.findViewById(R.id.editMasker1);
+        gelas = view.findViewById(R.id.editGlass1);
         add = view.findViewById(R.id.addButton);
         clear = view.findViewById(R.id.clearButton);
-        barangList.add(new Barang("12","14"));
-        barangList.add(new Barang("34","12"));
-        delete = view.findViewById(R.id.deleteButton);
 
         init(view);
-
         Intent intent = getActivity().getIntent();
         if(intent.getIntExtra("position",-1)!=1){
             try{
@@ -110,12 +110,12 @@ public class Data_MasukFragment extends Fragment {
             public void onClick(View v) {
                 String c = coomb.getText().toString();
                 String n = nacl.getText().toString();
-                if(!c.equals("")&&!n.equals("")){
+                if(!c.equals("")){
                         try {
                             if(!sharedPreferences.getString("saved","").equals(""))
                             saved = new JSONObject(sharedPreferences.getString("saved",""));
                         saved.put("saved" + saved.length(),c);
-                        saved.put("saved" + saved.length(),n);
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -123,7 +123,7 @@ public class Data_MasukFragment extends Fragment {
                     editor.putString("saved",saved.toString());
                     editor.apply();
                     coomb.setText("");
-                    nacl.setText("");
+
                     Fragment fragment = null;
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -131,9 +131,31 @@ public class Data_MasukFragment extends Fragment {
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
                     }
+                else if(!n.equals("")){
+                    try {
+                        if(!sharedPreferences.getString("saved","").equals(""))
+                            saved = new JSONObject(sharedPreferences.getString("saved",""));
+
+                        saved.put("saved" + saved.length(),n);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("testing",saved+"");
+                    editor.putString("saved",saved.toString());
+                    editor.apply();
+                    coomb.setText("");
+
+                    Fragment fragment = null;
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_content, new HistoryFragment());
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
                 }
+
+            }
         });
-        delete.setOnClickListener(this::deleteAllValue);
+
 
 
         return view;

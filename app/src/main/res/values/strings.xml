@@ -30,4 +30,5 @@
     <string name="apps">Blood Bank inventory adalah Aplikasi Inventory barang yang dimana aplikasi ini dapat mendata barang masuk dan barang keluar. setelah barang ini sudah diinputkan maka data barang disimpan di history.</string>
     <string name="history_barang">History Barang</string>
     <string name="barang_masuk">Barang Masuk</string>
+    <string name="barang_keluar">Barang Keluar</string>
 </resources>

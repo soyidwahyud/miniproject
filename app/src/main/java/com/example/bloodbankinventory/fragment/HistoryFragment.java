@@ -1,20 +1,31 @@
 package com.example.bloodbankinventory.fragment;
 
 
+import android.app.Dialog;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import androidx.fragment.app.DialogFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.widget.EditText;
+import android.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.content.SharedPreferences;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +39,8 @@ import com.example.bloodbankinventory.R;
 import com.example.bloodbankinventory.shareprefs;
 import com.example.bloodbankinventory.utils.Barang;
 
+import com.example.bloodbankinventory.utils.BarangCRUD;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -39,105 +52,60 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends Fragment implements customDialogFragment.OnInputSelected{
 
-    RecyclerView recyclerView;
-    SharedPreferences sharedPreferences;
-    JSONObject saved;
-    Button delete;
-    private static final String BARANG_KEY = "barang";
-    SharedPreferences.OnSharedPreferenceChangeListener mListener;
-    private static final String TAG = "HistoryFragment";
-
-
+    ListView list;
+    ArrayAdapter<String>adapter;
+    BarangCRUD crud = new BarangCRUD();
+    Dialog d;
+    TextView inputnama, inputdata;
     public HistoryFragment(){
 
     }
+    private static final String TAG = "HistoryFragment";
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_history, container, false);
-        recyclerView = view.findViewById(R.id.recyclerview);
-        sharedPreferences= getActivity().getSharedPreferences("text", Context.MODE_PRIVATE);
-        Log.d("Testing",sharedPreferences.getString("saved",""));
-        try{
-            saved = new JSONObject(sharedPreferences.getString("saved",""));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        delete = view.findViewById(R.id.delete);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new Adapter());
+        inputnama = view.findViewById(R.id.input_nama);
+        inputdata = view.findViewById(R.id.input_barang);
+        //list= (ListView)view.findViewById(R.id.lv);
 
-        delete.setOnClickListener(this::deleteAllValue);
-        mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        /*list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                switch (key){
-                    case BARANG_KEY:{
-                        String barang = sharedPreferences.getString("key","N/A");
-                        Log.d(TAG,"onSharedPreferencesChanged: " +key + " : " + barang);
-                        break;
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if(d != null) {
+                    if(!d.isShowing())
+                    {
+                        displayInputDialog(i,view);
+                    }else
+                    {
+                        d.dismiss();
                     }
                 }
             }
-        };
-        sharedPreferences = getActivity().getSharedPreferences("text",Context.MODE_PRIVATE);
-        sharedPreferences.registerOnSharedPreferenceChangeListener(mListener);
+        });*/
+        FloatingActionButton fab = (FloatingActionButton)view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: opening dialog");
+
+                customDialogFragment dialog = new customDialogFragment();
+                dialog.setTargetFragment(HistoryFragment.this, 1);
+                dialog.show(getFragmentManager(), "inputdialog");
+
+            }
+        });
 
         return view;
     }
 
-    private void deleteAllValue(View view){
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("delete",Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
-        editor.commit();
 
-        Toast.makeText(getContext(),"Value Remove", Toast.LENGTH_SHORT).show();
-    }
-    public class Adapter extends RecyclerView.Adapter<Adapter.Holder>{
-
-
-        @NonNull
-        @Override
-        public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(getContext()).inflate(R.layout.barang_item,parent,false);
-            Holder holder = new Holder(view);
-
-            return holder;
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull Holder holder, int position) {
-            try {
-                holder.c.setText(saved.getString("saved" + position));
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return saved.length();
-        }
-
-        public class Holder extends RecyclerView.ViewHolder {
-
-            TextView c;
-            TextView n;
-
-            public Holder(@NonNull View itemView) {
-                super(itemView);
-                c=itemView.findViewById(R.id.barang1);
-
-            }
-        }
-    }
 
     @Override
     public void onResume() {
@@ -146,5 +114,11 @@ public class HistoryFragment extends Fragment {
     }
 
 
+    @Override
+    public void sendInput(String input) {
+        Log.d(TAG, "sendInput: found incoming input: " + input);
 
+        inputnama.setText(input);
+        inputdata.setText(input);
+    }
 }
