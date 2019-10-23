@@ -87,12 +87,7 @@ public class CobaActivity extends AppCompatActivity {
                     case R.id.nav_history:
                         fragment = new HistoryFragment();
                         break;
-                    case R.id.nav_datam:
-                        fragment = new Data_MasukFragment();
-                        break;
-                    case R.id.nav_datak:
-                        fragment = new Data_KeluarFragment();
-                        break;
+
                     default:
                         fragment = new HomeFragment();
                 }

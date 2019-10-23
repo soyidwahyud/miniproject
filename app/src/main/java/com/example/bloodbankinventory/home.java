@@ -73,12 +73,6 @@ public class home extends AppCompatActivity {
                         }
                         else if (current instanceof HistoryFragment) {
                             navigationView.setCheckedItem(R.id.nav_history);
-                        } else if(current instanceof Data_MasukFragment) {
-                            navigationView.setCheckedItem(R.id.nav_datam);
-                        }
-
-                        else if(current instanceof Data_KeluarFragment) {
-                            navigationView.setCheckedItem(R.id.nav_datak);
                         }
                         else if(current instanceof LogOutFragment) {
                             navigationView.setCheckedItem(R.id.nav_logout);
@@ -111,12 +105,7 @@ public class home extends AppCompatActivity {
                     case R.id.nav_history:
                         fragment = new HistoryFragment();
                         break;
-                    case R.id.nav_datam:
-                        fragment = new Data_MasukFragment();
-                        break;
-                    case R.id.nav_datak:
-                        fragment = new Data_KeluarFragment();
-                        break;
+
                     case R.id.nav_logout:
                         fragment = new LogOutFragment();
                         break;

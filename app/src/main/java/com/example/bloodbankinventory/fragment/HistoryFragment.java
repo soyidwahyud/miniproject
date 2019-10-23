@@ -5,7 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.fragment.app.DialogFragment;
+import android.app.DialogFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -52,12 +52,14 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HistoryFragment extends Fragment implements customDialogFragment.OnInputSelected{
+public class HistoryFragment extends Fragment implements customDialogFragment.customDialogListener {
 
     ListView list;
     ArrayAdapter<String>adapter;
     BarangCRUD crud = new BarangCRUD();
     Dialog d;
+    TextView tes;
+
     TextView inputnama, inputdata;
     public HistoryFragment(){
 
@@ -72,7 +74,7 @@ public class HistoryFragment extends Fragment implements customDialogFragment.On
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_history, container, false);
         inputnama = view.findViewById(R.id.input_nama);
-        inputdata = view.findViewById(R.id.input_barang);
+        inputdata = view.findViewById(R.id.input_jumlah);
         //list= (ListView)view.findViewById(R.id.lv);
 
         /*list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -89,6 +91,27 @@ public class HistoryFragment extends Fragment implements customDialogFragment.On
                 }
             }
         });*/
+        inputnama.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: opening dialog");
+
+                customDialogFragment dialog = new customDialogFragment();
+                dialog.setTargetFragment(HistoryFragment.this, 1);
+                dialog.show(getFragmentManager(), "inputdialog");
+            }
+        });
+
+        inputdata.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: opening dialog");
+
+                customDialogFragment dialog = new customDialogFragment();
+                dialog.setTargetFragment(HistoryFragment.this, 1);
+                dialog.show(getFragmentManager(), "inputdialog");
+            }
+        });
         FloatingActionButton fab = (FloatingActionButton)view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,7 +129,6 @@ public class HistoryFragment extends Fragment implements customDialogFragment.On
     }
 
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -115,10 +137,25 @@ public class HistoryFragment extends Fragment implements customDialogFragment.On
 
 
     @Override
-    public void sendInput(String input) {
-        Log.d(TAG, "sendInput: found incoming input: " + input);
+    public void sendInput(String barang) {
+        Log.d(TAG, "sendInput: found incoming input: " + barang);
 
-        inputnama.setText(input);
-        inputdata.setText(input);
+        inputnama.setText(barang);
+
+    }
+
+    @Override
+    public void sendInput2(String jumlah) {
+        inputdata.setText(jumlah);
+    }
+
+    @Override
+    public void sendInput3(String newName) {
+        inputnama.setText(newName);
+    }
+
+    @Override
+    public void sendInput4(String newInput) {
+        inputdata.setText(newInput);
     }
 }
