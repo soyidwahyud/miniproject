@@ -60,9 +60,9 @@ public class HistoryFragment extends Fragment {
 
     TextView inputnama, inputdata;
 
-    private String[] idbarang ={"1","2","3","4"};
-    private String[] nama={"Coomb serum", "Pasteur pipet", "Hands Schone", "Object Glass"};
-    private String[] jumlah={"12","22","14","31"};
+    private String[] idbarang ={"1","2"};
+    private String[] nama={"Coomb serum", "Pasteur pipet"};
+    private String[] jumlah={"12","22"};
     public HistoryFragment(){
 
     }
@@ -107,7 +107,7 @@ public class HistoryFragment extends Fragment {
         });*/
         return view;
     }
-    public  void updateBarang(BarangCRUD barang, int pos, String newName, String newJumlah){
+    /*public  void updateBarang(BarangCRUD barang, int pos, String newName, String newJumlah){
 
         ArrayList<String>id = new ArrayList<>(Arrays.asList(idbarang));
         ArrayList<String> namaa = new ArrayList<>(Arrays.asList(nama));
@@ -120,7 +120,7 @@ public class HistoryFragment extends Fragment {
         jumlaah.add(pos,String.valueOf(barang.getJumlah()));
 
 
-    }
+    }*/
 
     public void newBarang(BarangCRUD barang){
         ArrayList<String>id = new ArrayList<>(Arrays.asList(idbarang));
@@ -132,6 +132,23 @@ public class HistoryFragment extends Fragment {
         this.idbarang = id.toArray(new String[id.size()]);
         this.nama = namaa.toArray(new String[namaa.size()]);
         this.jumlah = jumlaah.toArray(new String[jumlaah.size()]);
+    }
+    public void updateBarang(int pos, BarangCRUD barang){
+        ArrayList<String>id = new ArrayList<>(Arrays.asList(idbarang));
+        ArrayList<String> namaa = new ArrayList<>(Arrays.asList(nama));
+        ArrayList<String> jumlaah = new ArrayList<>(Arrays.asList(jumlah));
+        int position = pos;
+
+        try{
+            id.set(position, String.valueOf(position));
+            namaa.set(position, barang.getNama());
+            jumlaah.set(position,String.valueOf(barang.getJumlah()));
+            this.idbarang = id.toArray(new String[id.size()]);
+            this.nama = namaa.toArray(new String[namaa.size()]);
+            this.jumlah = jumlaah.toArray(new String[jumlaah.size()]);
+        }catch (Exception e){
+            System.out.println(e);
+        }
     }
 
     @Override
@@ -156,12 +173,8 @@ public class HistoryFragment extends Fragment {
     }
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
         void onClickedBarang(BarangCRUD barang);
 
-        void addNewBarang(BarangCRUD barang);
-
-        void btnAdd();
         void btnOpen();
     }
 

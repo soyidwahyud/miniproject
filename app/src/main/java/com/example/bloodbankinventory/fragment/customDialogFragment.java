@@ -72,7 +72,7 @@ public class customDialogFragment extends DialogFragment {
         data.setText(String.valueOf(this.jumlah));
 
         Button add =view.findViewById(R.id.addBtn);
-        Button update = view.findViewById(R.id.updateBtn);
+        //Button update = view.findViewById(R.id.updateBtn);
         //Button delete = view.findViewById(R.id.deleteBtn);
 
 
@@ -87,13 +87,7 @@ public class customDialogFragment extends DialogFragment {
 
             }
         });
-        update.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String newNama = nama.getText().toString();
-                //nt
-            }
-        });
+
         /*delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,13 +127,6 @@ public class customDialogFragment extends DialogFragment {
         return cus;
     }
 
-    /*public void sendBackResult(){
-        customDialogListener listener = (customDialogListener) getTargetFragment();
-        listener.sendInput(nama.getText().toString());
-        listener.sendInput(data.getText().toString());
-        listener.sendInput2();
-        dismiss();
-    }*/
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

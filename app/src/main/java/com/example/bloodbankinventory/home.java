@@ -200,6 +200,7 @@ public class home extends AppCompatActivity implements HistoryFragment.OnFragmen
         historyFragment.newBarang(barang);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.frame_content, historyFragment)
+                .addToBackStack(null)
                 .commit();
     }
 
@@ -211,13 +212,21 @@ public class home extends AppCompatActivity implements HistoryFragment.OnFragmen
                 .commit();
     }
 
-    @Override
+
+    /*@Override
     public void btnAdd() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.frame_content, new HistoryFragment())
                 .addToBackStack(null)
                 .commit();
-    }
+
+        if (!historyFragment.isAdded()){
+           FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.add(R.id.frame_content,historyFragment,"HistoryFragment");
+            transaction.commit();
+            finish();
+        }
+    }*/
 
     @Override
     public void btnOpen() {

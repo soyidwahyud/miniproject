@@ -53,13 +53,13 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.O
 
     }
 
-    @Override
+    /*@Override
     public void btnAdd() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.frame_content, new HistoryFragment())
                 .addToBackStack(null)
                 .commit();
-    }
+    }*/
     @Override
     public void btnOpen() {
         getSupportFragmentManager().beginTransaction()
