@@ -2,6 +2,7 @@ package com.example.bloodbankinventory.fragment;
 
 import androidx.fragment.app.DialogFragment;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.bloodbankinventory.R;
+import com.example.bloodbankinventory.utils.Barang;
 import com.example.bloodbankinventory.utils.BarangCRUD;
 
 /**
@@ -28,11 +30,16 @@ public class customDialogFragment extends DialogFragment {
 
     private static final String TAG = "inputdialog";
 
-    public customDialogListener mOnInputSelected;
+    //public customDialogListener mOnInputSelected;
+    private OnFragmentInteractionListener listener;
+
+    private int id;
+    private String namaa;
+    private int jumlah;
 
     private EditText nama, data;
     Button addButton, update, delete;
-    BarangCRUD crud = new BarangCRUD();
+
     ArrayAdapter<String>adapter;
     ListView list;
     int pos;
@@ -48,67 +55,46 @@ public class customDialogFragment extends DialogFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.inputdialog, container, false);
 
-        getDialog().setContentView(R.layout.inputdialog);
-        getDialog().setTitle("Input Data");
-        final EditText nama = getDialog().findViewById(R.id.nameEditText);
-        final EditText data = getDialog().findViewById(R.id.inputEditText);
-        Button add =getDialog().findViewById(R.id.addBtn);
-        Button update = getDialog().findViewById(R.id.updateBtn);
-        Button delete = getDialog().findViewById(R.id.deleteBtn);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            BarangCRUD barang = bundle.getParcelable("Data");
+            this.id = barang.getId();
+            this.namaa = barang.getNama();
+            this.jumlah = barang.getJumlah();
+        }
+        //BarangCRUD barang = bundle.getParcelable("Data");
 
 
+        final EditText nama = view.findViewById(R.id.nameEditText);
+        final EditText data = view.findViewById(R.id.inputEditText);
 
-        update.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: update data");
-                String newName=nama.getText().toString();
-                String newInput = data.getText().toString();
-                if(newName.length()>0 && newName != null && newInput.length()>0 && newInput !=null)
-                {
+        nama.setText(this.namaa);
+        data.setText(String.valueOf(this.jumlah));
 
-                    if(crud.update(pos,newName,newInput))
-                    {
-                        nama.setText(newName);
-                        data.setText(newInput);
+        Button add =view.findViewById(R.id.addBtn);
+        Button update = view.findViewById(R.id.updateBtn);
+        //Button delete = view.findViewById(R.id.deleteBtn);
 
 
-                        mOnInputSelected.sendInput3(newName);
-                        mOnInputSelected.sendInput4(newInput);
-                    }
-                }else
-                {
-                    Toast.makeText(getActivity(), "Nama Barang dan Data Barang tidak boleh kosong", Toast.LENGTH_SHORT).show();
-                }
-                getDialog().show();
-            }
-        });
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: add data");
-                String barang=nama.getText().toString();
-                String jumlah = data.getText().toString();
-                if(barang.length()>0 && barang != null && jumlah.length()>0 && jumlah != null)
-                {
-                    crud.save(barang,jumlah);
-                    nama.setText("");
-                    data.setText("");
+                BarangCRUD barang = new BarangCRUD();
+                barang.setId(0);
+                barang.setNama(nama.getText().toString());
+                barang.setJumlah(Integer.parseInt(data.getText().toString()));
+                listener.addNewBarang(barang);
 
-                    HistoryFragment h = (HistoryFragment) getActivity().getSupportFragmentManager().findFragmentByTag("HistoryFragment");
-                    h.inputnama.setText(barang);
-                    h.inputdata.setText(jumlah);
-                    //mOnInputSelected.sendInput(barang);
-                    //mOnInputSelected.sendInput2(jumlah);
-                }
-                else
-                {
-                    Toast.makeText(getActivity(), "Nama Barang dan Data Barang tidak boleh kosong", Toast.LENGTH_SHORT).show();
-                }
-                getDialog().dismiss();
             }
         });
-        delete.setOnClickListener(new View.OnClickListener() {
+        update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String newNama = nama.getText().toString();
+                //nt
+            }
+        });
+        /*delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: delete data");
@@ -123,7 +109,7 @@ public class customDialogFragment extends DialogFragment {
         });
 
 
-        /*if(pos== -1)
+        if(pos== -1)
         {
             add.setEnabled(true);
             update.setEnabled(false);
@@ -146,13 +132,7 @@ public class customDialogFragment extends DialogFragment {
         cus.setArguments(args);
         return cus;
     }
-    public interface customDialogListener{
 
-        void sendInput(String barang);
-        void sendInput2(String jumlah);
-        void sendInput3(String newName);
-        void sendInput4(String newInput);
-    }
     /*public void sendBackResult(){
         customDialogListener listener = (customDialogListener) getTargetFragment();
         listener.sendInput(nama.getText().toString());
@@ -163,11 +143,23 @@ public class customDialogFragment extends DialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try{
-            mOnInputSelected = (customDialogListener) getTargetFragment();
-        }catch (ClassCastException e){
-            Log.e(TAG, "onAttach: ClassCastException : " + e.getMessage() );
+        if (context instanceof OnFragmentInteractionListener) {
+            listener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
         }
+    }
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+    }
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+        void addNewBarang(BarangCRUD barang);
+        void updateBarang(BarangCRUD barang);
     }
 
 }

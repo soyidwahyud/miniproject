@@ -3,6 +3,7 @@ package com.example.bloodbankinventory.fragment;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.DialogFragment;
@@ -39,6 +40,7 @@ import com.example.bloodbankinventory.R;
 import com.example.bloodbankinventory.shareprefs;
 import com.example.bloodbankinventory.utils.Barang;
 
+import com.example.bloodbankinventory.utils.BarangAdapter;
 import com.example.bloodbankinventory.utils.BarangCRUD;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
@@ -47,20 +49,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HistoryFragment extends Fragment implements customDialogFragment.customDialogListener {
-
-    ListView list;
-    ArrayAdapter<String>adapter;
-    BarangCRUD crud = new BarangCRUD();
-    Dialog d;
-    TextView tes;
+public class HistoryFragment extends Fragment {
+    private OnFragmentInteractionListener listener;
 
     TextView inputnama, inputdata;
+
+    private String[] idbarang ={"1","2","3","4"};
+    private String[] nama={"Coomb serum", "Pasteur pipet", "Hands Schone", "Object Glass"};
+    private String[] jumlah={"12","22","14","31"};
     public HistoryFragment(){
 
     }
@@ -73,89 +75,96 @@ public class HistoryFragment extends Fragment implements customDialogFragment.cu
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_history, container, false);
-        inputnama = view.findViewById(R.id.input_nama);
-        inputdata = view.findViewById(R.id.input_jumlah);
-        //list= (ListView)view.findViewById(R.id.lv);
+        //inputnama = view.findViewById(R.id.input_nama);
+        //inputdata = view.findViewById(R.id.input_jumlah);
 
-        /*list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ListView list= view.findViewById(R.id.liist);
+
+        BarangAdapter barangAdapter = new BarangAdapter(this.getContext(),idbarang,nama, jumlah);
+        list.setAdapter(barangAdapter);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(d != null) {
-                    if(!d.isShowing())
-                    {
-                        displayInputDialog(i,view);
-                    }else
-                    {
-                        d.dismiss();
-                    }
-                }
-            }
-        });*/
-        inputnama.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: opening dialog");
-
-                customDialogFragment dialog = new customDialogFragment();
-                dialog.setTargetFragment(HistoryFragment.this, 1);
-                dialog.show(getFragmentManager(), "inputdialog");
-            }
-        });
-
-        inputdata.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: opening dialog");
-
-                customDialogFragment dialog = new customDialogFragment();
-                dialog.setTargetFragment(HistoryFragment.this, 1);
-                dialog.show(getFragmentManager(), "inputdialog");
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                BarangCRUD barang = new BarangCRUD(Integer.valueOf(idbarang[position]), nama[position], Integer.valueOf(jumlah[position]));
+                listener.onClickedBarang(barang);
             }
         });
         FloatingActionButton fab = (FloatingActionButton)view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "onClick: opening dialog");
-
-                customDialogFragment dialog = new customDialogFragment();
-                dialog.setTargetFragment(HistoryFragment.this, 1);
-                dialog.show(getFragmentManager(), "inputdialog");
+                listener.btnOpen();
 
             }
         });
-
+        /*list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                customDialogFragment dialog = new customDialogFragment();
+                dialog.setTargetFragment(HistoryFragment.this, 1);
+                dialog.show(getFragmentManager(), "inputdialog");
+            }
+        });*/
         return view;
     }
+    public  void updateBarang(BarangCRUD barang, int pos, String newName, String newJumlah){
+
+        ArrayList<String>id = new ArrayList<>(Arrays.asList(idbarang));
+        ArrayList<String> namaa = new ArrayList<>(Arrays.asList(nama));
+        ArrayList<String> jumlaah = new ArrayList<>(Arrays.asList(jumlah));
+
+        namaa.remove(barang.getNama());
+        namaa.add(pos, newName);
+
+        jumlaah.remove(barang.getJumlah());
+        jumlaah.add(pos,String.valueOf(barang.getJumlah()));
 
 
+    }
+
+    public void newBarang(BarangCRUD barang){
+        ArrayList<String>id = new ArrayList<>(Arrays.asList(idbarang));
+        ArrayList<String> namaa = new ArrayList<>(Arrays.asList(nama));
+        ArrayList<String> jumlaah = new ArrayList<>(Arrays.asList(jumlah));
+        id.add(String.valueOf(id.size()+1));
+        namaa.add(barang.getNama());
+        jumlaah.add(String.valueOf(barang.getJumlah()));
+        this.idbarang = id.toArray(new String[id.size()]);
+        this.nama = namaa.toArray(new String[namaa.size()]);
+        this.jumlah = jumlaah.toArray(new String[jumlaah.size()]);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            listener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+    }
     @Override
     public void onResume() {
         super.onResume();
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.fragment_history);
     }
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+        void onClickedBarang(BarangCRUD barang);
 
+        void addNewBarang(BarangCRUD barang);
 
-    @Override
-    public void sendInput(String barang) {
-        Log.d(TAG, "sendInput: found incoming input: " + barang);
-
-        inputnama.setText(barang);
-
+        void btnAdd();
+        void btnOpen();
     }
 
-    @Override
-    public void sendInput2(String jumlah) {
-        inputdata.setText(jumlah);
-    }
 
-    @Override
-    public void sendInput3(String newName) {
-        inputnama.setText(newName);
-    }
 
-    @Override
-    public void sendInput4(String newInput) {
-        inputdata.setText(newInput);
-    }
 }

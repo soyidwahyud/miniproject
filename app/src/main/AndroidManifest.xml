@@ -9,24 +9,19 @@
         android:roundIcon="@mipmap/ic_baank"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CobaActivity">
-
-        </activity>
-        <activity android:name=".SplashActivity" />
-        <activity android:name=".MainActivity" >
-
+        <activity android:name=".navHeaderActivity"></activity>
+        <activity android:name=".splashscreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".home">
-        </activity>
-        <activity android:name=".login">
-
-        </activity>
-
+        <activity android:name=".CobaActivity" />
+        <activity android:name=".SplashActivity" />
+        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".home" />
+        <activity android:name=".login" />
     </application>
 
 </manifest>

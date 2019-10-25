@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,14 +30,14 @@ public class LogOutFragment extends Fragment {
     //SessionManager session;
     //private Session session;
     private shareprefs session;
-    private Button logout;
+    private ImageButton logout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_log_out, container, false);
 
-        logout = (Button) rootView.findViewById(R.id.logout);
+        logout = (ImageButton) rootView.findViewById(R.id.logout);
 
 
         //session = new shareprefs();
@@ -51,6 +52,7 @@ public class LogOutFragment extends Fragment {
                     Intent login = new Intent(getActivity(),login.class);
                     startActivity(login);
                     getActivity().finish();
+                    Toast.makeText(getContext(),"Berhasil Log out",Toast.LENGTH_SHORT);
                 }
                 else {
                     Toast.makeText(getContext(),"Cannot Log out",Toast.LENGTH_SHORT);

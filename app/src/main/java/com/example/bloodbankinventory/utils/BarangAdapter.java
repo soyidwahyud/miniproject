@@ -4,11 +4,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bloodbankinventory.R;
@@ -16,52 +18,31 @@ import com.example.bloodbankinventory.R;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-/*
-public class BarangAdapter  extends BaseAdapter {
 
-    private ArrayList<Barang> barangList;
-    Context context;
-    LayoutInflater inflater;
+public class BarangAdapter  extends ArrayAdapter<String> {
+    String []id;
+    String []nama;
+    String []jumlah;
 
-    public BarangAdapter(ArrayList<Barang> barangList, Context context) {
-        this.barangList = barangList;
-        this.context = context;
-        this.inflater= (LayoutInflater.from(context));
+    public BarangAdapter(Context context, String[] idbarang, String[] nama, String[] jumlah){
+        super(context, R.layout.barang, nama);
+        this.id = idbarang;
+        this.nama = nama;
+        this.jumlah = jumlah;
     }
-
-
+    @NonNull
     @Override
-    public int getCount() {
-        return barangList.size();
-    }
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        LayoutInflater layoutInflater = (LayoutInflater) getContext().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        convertView = layoutInflater.inflate(R.layout.barang, parent, false);
 
-    @Override
-    public Object getItem(int i) {
-        return null;
-    }
+        TextView nama = convertView.findViewById(R.id.textNama);
+        TextView jumlah = convertView.findViewById(R.id.textJumlah);
 
-    @Override
-    public long getItemId(int i) {
-        return 0;
-    }
+        nama.setText(this.nama[position]);
+        jumlah.setText(this.jumlah[position]);
 
-    @Override
-    public View getView(int i,View convertView, ViewGroup viewGroup) {
-        convertView = inflater.inflate(R.layout.barang_item,null);
-        TextView c = (TextView)convertView.findViewById(R.id.coombserum);
-        TextView n = (TextView)convertView.findViewById(R.id.nacl);
-
-        c.setText(barangList.get(i).getCoombserum());
-        n.setText(barangList.get(i).getNacl());
 
         return convertView;
     }
-
-
-    public BarangAdapter(ArrayList<Barang> barang) {
-
-        barangList = barang;
-    }
-*/
-
-//}
+}

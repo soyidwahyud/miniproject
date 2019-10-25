@@ -16,6 +16,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -29,18 +30,22 @@ import com.example.bloodbankinventory.fragment.Data_MasukFragment;
 import com.example.bloodbankinventory.fragment.HistoryFragment;
 import com.example.bloodbankinventory.fragment.HomeFragment;
 import com.example.bloodbankinventory.fragment.LogOutFragment;
+import com.example.bloodbankinventory.fragment.customDialogFragment;
+import com.example.bloodbankinventory.utils.BarangCRUD;
 import com.google.android.material.navigation.NavigationView;
 
 
-public class home extends AppCompatActivity {
+public class home extends AppCompatActivity implements HistoryFragment.OnFragmentInteractionListener, customDialogFragment.OnFragmentInteractionListener {
     private Context ctx;
-    private FragmentManager fragmentManager;
     private static final String TAG = "home";
     Button logout;
     DrawerLayout mDrawerLayout;
     Toolbar toolbar;
     ActionBarDrawerToggle drawerToggle;
-    private int waktu_loading=4000;
+
+    private HistoryFragment historyFragment;
+    private customDialogFragment CustomDialogFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +54,9 @@ public class home extends AppCompatActivity {
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        historyFragment = new HistoryFragment();
+        CustomDialogFragment = new customDialogFragment();
 
         loadFragment(new HomeFragment());
         ActionBar actionbar = getSupportActionBar();
@@ -167,5 +175,55 @@ public class home extends AppCompatActivity {
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         drawerToggle.syncState();
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void onClickedBarang(BarangCRUD barang) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("Data", barang);
+        customDialogFragment dialog = new customDialogFragment();
+        dialog.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.frame_content, dialog)
+                .addToBackStack(null)
+                .commit();
+    }
+
+
+    @Override
+    public void addNewBarang(BarangCRUD barang) {
+        historyFragment.newBarang(barang);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.frame_content, historyFragment)
+                .commit();
+    }
+
+    @Override
+    public void updateBarang(BarangCRUD barang) {
+        historyFragment.newBarang(barang);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.frame_content, historyFragment)
+                .commit();
+    }
+
+    @Override
+    public void btnAdd() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.frame_content, new HistoryFragment())
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void btnOpen() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.frame_content, new customDialogFragment())
+                .addToBackStack(null)
+                .commit();
     }
 }
